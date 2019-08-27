@@ -2,10 +2,11 @@ Note: This repository contains scripts that were developed for "Benchmarking Too
 
 Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickolas Navin (nnavin@mdanderson.org),  Luay Nakhleh (nakhleh@rice.edu) 
 
-* [Usage of Single Cell Simulator](#usage_of_single_cell_simulator)
+- [Usage of Single Cell Simulator](#usage_of_single_cell_simulator)
+    * [Software Requirements](#software_requirements)
 
 # <a name="usage_of_single_cell_simulator"></a>Usage of Single Cell Simulator
-## Software Requirements ##
+## <a name="software_requirements"></a>Software Requirements ##
 
 1. Python 2.7.15 or up.
 
