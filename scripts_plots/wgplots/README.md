@@ -1,0 +1,1 @@
+This folder is for generating figures whose X axis is the whole genome's coordinates separated into bins, primary Y axis is the read count, and secondary Y axis is the absolute copy number. There might be more than one data set for secondary Y axis.

@@ -1,0 +1,8 @@
+# prepare files for HMMcopy and Ginkgo
+exp=ploidy
+for i in `seq 1 5`; do python convertHMMcopySeg2bed_pop.py ../violin/data/${exp}/rep_1/HMMcopy/p$i; done
+for i in `seq 1 5`; do python convertGinkgoSegCopy2bed_pop.py ../violin/data/${exp}/rep_1/Ginkgo/p$i/SegCopy; done
+
+exp=fluc
+for i in `seq 1 4`; do python convertHMMcopySeg2bed_pop.py ../violin/data/${exp}/rep_1/HMMcopy/p$i; done
+for i in `seq 1 4`; do python convertGinkgoSegCopy2bed_pop.py ../violin/data/${exp}/rep_1/Ginkgo/p$i/SegCopy; done
