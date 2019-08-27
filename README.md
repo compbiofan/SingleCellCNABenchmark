@@ -3,12 +3,28 @@ Note: This repository contains scripts that were developed for "Benchmarking Too
 Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickolas Navin (nnavin@mdanderson.org),  Luay Nakhleh (nakhleh@rice.edu) 
 
 ## Table of Contents
-- [Usage of Single Cell Simulator](#usage_of_single_cell_simulator)
+- [Usage of Single Cell Simulator.](#usage_of_single_cell_simulator)
     * [Software Requirements](#software_requirements)
     * [Environment Setup](#environment_setup)
     * [Usage](#usage)
+- [Scripts used for simulating large dataset, data with different ploidies, and data with different levels of fluctuations.](#simulation_3exp)
+    * [Simulating large dataset](#large_dataset)
+    * [Simulating reads with different ploidies](#ploidies)
+    * [Simulating reads with different levels of fluctuation](#fluctuations)
+- [Commands to run HMMcopy, Ginkgo and CopyNumber.](#commands_3methods)
+    * [HMMcopy](#hmmcopy)
+    * [Ginkgo](#ginkgo)
+    * [CopyNumber](#copynumber)
+- [Miscellaneous.](#misc)
+    * [Reference](#reference)
+    * [Mapping the reads to the reference](#mapping)
+    * [Making ground truth from the simulator for comparison](#ground_truth)
+- [Generating plots (violin plots, plots with Lorenz and Beta distribution, ROCs, venn diagram and flip count histograms).](#plots)
+    * [Generating violin plots](#violin_plots)
+    * [Generating plots on the whole genome with read count and absolute copy number from ground truth or a method](#read_count_copy_number)
+    * [Generating the plot including both Lorenz curve and the corresponding Beta distribution](#lorenz_beta)
 
-# <a name="usage_of_single_cell_simulator"></a>Usage of Single Cell Simulator
+# <a name="usage_of_single_cell_simulator"></a>Usage of Single Cell Simulator.
 ## <a name="software_requirements"></a>Software Requirements ##
 
 1. Python 2.7.15 or up.
@@ -82,16 +98,16 @@ Suppose $this_dir is the path of this package.
     
     * -k: it is made 1 to skip step 1. 
     
-# Scripts used for simulating large dataset, data with different ploidies, and data with different levels of fluctuations. #
+# <a name="simulation_3exp"></a>Scripts used for simulating large dataset, data with different ploidies, and data with different levels of fluctuations. #
 
-## Simulating large dataset. 
+## <a name="large_dataset"></a>Simulating large dataset. 
 ##  
 
 The following lists the command to simulate the large dataset. Step 2 of the simulator is the same as the general one described in "Usage". 
 
 ```python main.par.py -S $wgsim-master -r $dir -n 10000 -p 1 -X 8 -t $ref -W 1 -C 0.3 -E 1 -l 36 -m 2000000 -e 5000000```
 
-## Simulating reads with different ploidies. 
+## <a name="plodies"></a>Simulating reads with different ploidies. 
 ## 
 
 The following lists the command to simulate the tree and the alternative alleles (step 1 of the simulator) for different ploidies. Step 2 of the simulator is the same as the general one described in "Usage". 
@@ -116,7 +132,7 @@ The following lists the command to simulate the tree and the alternative alleles
 
 ```python main.par.py -S $wgsim-master -r $dir -n 100 -p 1 -X 8 -t $ref -W 1 -C 0.9 -l 36 -e 5000000 -E 1 -m 10000000 -J 0.55```
 
-## Simulating reads with different levels of fluctuation ##
+## <a name="fluctuations"></a>Simulating reads with different levels of fluctuation ##
 
 The following lists the command to simulate the reads  (step 2 of the simulator) for different fluctuations. 
 
@@ -136,9 +152,9 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
 
 ```python main.par.py -S $wgsim-master -r $dir -l 36 -x 0.5 -y 0.38 -k 1```
 
-# Commands to run HMMcopy, Ginkgo and CopyNumber. #
+# <a name="commands_3methods"></a>Commands to run HMMcopy, Ginkgo and CopyNumber. #
 
-## HMMcopy ##
+## <a name="hmmcopy"></a>HMMcopy ##
 
 ### Installing the software and preparing the files. These steps are general for all datasets, but they should be done only once. ###
 
@@ -197,7 +213,7 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
 
     The explanation of the parameters can be found in https://rdrr.io/bioc/HMMcopy/man/HMMsegment.html. We suggest using a large $s (e.g., 10,000,000). For $e and $nu, we found the best combination is >0.999999 and 4, respectively in terms of F1 score (harmonic mean of recall and precision).   
 
-## Ginkgo ##
+## <a name="ginkgo"></a>Ginkgo ##
 
 ### Installing the software. ###
 
@@ -229,7 +245,7 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
 
     Output file can be found in $dir/SegCopy. Each row is a genomic region. The columns are chromosome, start, end, followed by the absolute copy number inference for each cell for this region. 
 
-## CopyNumber ##
+## <a name="copynumber"></a>CopyNumber ##
 
 ### Installing the software. ###
 
@@ -263,8 +279,8 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
 
     ```Rscript $this_dir/CopyNumber.R $dir/copynumber.input.csv $output_f```
     
-# Miscellaneous #
-## Referece file ##
+# <a name="misc"></a>Miscellaneous. #
+## <a name="reference_file"></a>Referece file ##
 
 All reference files used in this paper is hg19. The scripts to download it and to process the fa files for each chromosome are below.
 
@@ -274,7 +290,7 @@ All reference files used in this paper is hg19. The scripts to download it and t
 
 ```for i in `seq 1 22` X Y; do cat chr$i.fa >> hg19.fa; done```
 
-## Mapping the reads to the reference ##
+## <a name="mapping"></a>Mapping the reads to the reference ##
 
 For both simulated and real data, we use bwa to align the reads to the reference. We eliminated reads with mapping quality score < 40 in creating the bam file. The following are the commands we used to generate the bam files.
 
@@ -296,7 +312,7 @@ $hg19 is the reference fasta file in the absolute path. $processor is the number
 
 The outputs of this step are the sorted bam (duplication removal step was also performed in this script) and the bai file, with the names $dir/leaf${n}.sorted.bam[.bai].  
 
-## Making ground truth from the simulator for comparison. ##
+## <a name="ground_truth"></a>Making ground truth from the simulator for comparison. ##
 
 1. Read the from_first_step.tree.npy file generated in the first step of the simulator and convert it to a csv file. 
 
@@ -320,9 +336,9 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     This step generates gt.forCopyNumber.csv as the ground truth to be compared to CopyNumber's results.
 
-# Generating plots (violin plots, plots with Lorenz and Beta distribution, ROCs, venn diagram and flip count histograms). #
+# <a name="plots"></a>Generating plots (violin plots, plots with Lorenz and Beta distribution, ROCs, venn diagram and flip count histograms). #
 
-## Generating violin plots ##
+## <a name="violin_plots"></a>Generating violin plots ##
 
 1. Prepare the files.
 
@@ -402,7 +418,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
         In quantitative analysis we don't evaluate CopyNumber as it does not output absolute copy number.
 
-## Generating plots on the whole genome with read count and absolute copy number from ground truth or a method. ##
+## <a name="read_count_copy_number"></a>Generating plots on the whole genome with read count and absolute copy number from ground truth or a method. ##
 
 1. Prepare the file for plot.
 
@@ -440,7 +456,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     $legend1 and $legend2 represent the label for the two columns with the absolute copy number in $file_for_plot. For the first case discussed in step 1, they are "Ground Truth" and "HMMcopy", respectively. For the second case discussed in step 1, they are "HMMcopy (candidate ploidy = x)" and "HMMcopy (candidate ploidy = y)". Please fill in x and y according to the data you use. Note that the scale of secondary Y axis needs to be tuned to align with the primary Y axis scale.  
 
-## Generating the plot including both Lorenz curve and the corresponding Beta distribution ##
+## <a name="lorenz_beta"></a>Generating the plot including both Lorenz curve and the corresponding Beta distribution ##
 
 1. Generate separate plots in one PDF for different levels of fluctuation.
 
