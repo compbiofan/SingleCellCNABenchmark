@@ -2,8 +2,11 @@ Note: This repository contains scripts that were developed for "Benchmarking Too
 
 Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickolas Navin (nnavin@mdanderson.org),  Luay Nakhleh (nakhleh@rice.edu) 
 
+## Table of Contents
 - [Usage of Single Cell Simulator](#usage_of_single_cell_simulator)
     * [Software Requirements](#software_requirements)
+    * [Environment Setup](#environment_setup)
+    * [Usage](#usage)
 
 # <a name="usage_of_single_cell_simulator"></a>Usage of Single Cell Simulator
 ## <a name="software_requirements"></a>Software Requirements ##
@@ -12,7 +15,7 @@ Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickola
 
 2. Python modules: numpy, graphviz, anytree. 
 
-## Environment Setup ##
+## <a name="environment_setup"></a>Environment Setup ##
 
 Suppose $this_dir is the path of this package.
 
@@ -36,7 +39,7 @@ Suppose $this_dir is the path of this package.
         
     ```pip install anytree```
 
-## Usage ##
+## <a name="usage"></a>Usage ##
 
 1. Generate the tree with CNVs on the edges.  
     
