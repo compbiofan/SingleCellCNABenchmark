@@ -107,7 +107,7 @@ The following lists the command to simulate the large dataset. Step 2 of the sim
 
 ```python main.par.py -S $wgsim-master -r $dir -n 10000 -p 1 -X 8 -t $ref -W 1 -C 0.3 -E 1 -l 36 -m 2000000 -e 5000000```
 
-## <a name="plodies"></a>Simulating reads with different ploidies. 
+## <a name="ploidies"></a>Simulating reads with different ploidies. 
 ## 
 
 The following lists the command to simulate the tree and the alternative alleles (step 1 of the simulator) for different ploidies. Step 2 of the simulator is the same as the general one described in "Usage". 
