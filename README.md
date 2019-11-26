@@ -491,7 +491,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     $fig_name is the name of the output figure.
 
-# <a name="PAUP"></a>Using PAUP to generate a maximum parsimony tree and count flips #
+# <a name="PAUP"></a>Using PAUP to generate a maximum parsimony tree and count flips. #
 
 ## Installing and running PAUP. ##
 
@@ -501,7 +501,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     ```chmod a+x paup4a166_osx```
 
-## Inferring the Maximum Parsimony tree using PAUP ##
+## Inferring the Maximum Parsimony tree using PAUP 
 
 1. Run the script named Nexus_gen.py to generate the input file of PAUP.
 
