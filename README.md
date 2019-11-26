@@ -487,6 +487,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
     $output.txt is the input file for the next step.
 
 2. Plot the Venn diagram in Python.
+
     ```python Venn_diagram_plot.py $output.txt $fig_name```
 
     $fig_name is the name of the output figure.
