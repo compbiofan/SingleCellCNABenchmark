@@ -469,3 +469,66 @@ The outputs of this step are the sorted bam (duplication removal step was also p
     ```Rscript scripts_plots/lorenz_beta/plot_lorenz_beta_summary.r $pdf_output```
 
     $pdf_output is the output pdf file.
+
+## <a name="venn_diagram"></a>Generating the Venn diagram ##
+1. Generate the sets of breakpoints from the three tools.
+    ```python Venn_data.py $thr $hmmcopy_result $ginkgo_result $copynumber_result > $output.txt
+    ```
+
+    $thr is the threshold which determines whether two breakpoints from two tools are the same or not. We have used $thr=400000 in our analysis in the paper. 
+
+    $hmmcopy_result is the output of HMMcopy.
+
+    $ginkgo_result is the output of Ginkgo.
+
+    $copynumber_result is the output of CopyNumber.
+
+    $output.txt is the input file for the next step.
+
+2. Plot the Venn diagram in Python.
+    ```python Venn_diagram_plot.py $output.txt $fig_name
+    ```
+
+    $fig_name is the name of the output figure.
+
+## <a name="flip_count"></a>Flip-count Analysis ##
+
+### Installing and running PAUP. ###
+
+1. Download PAUP from http://phylosolutions.com/paup-test/. In the website, under Command-line binaries, you can find the command-line versions of PAUP according to your OS. In case you need the GUI version of PAUP, download the file named PAUP_dev_icc.zip.
+
+2. Unzip the package, open terminal and go the directory of the unzipped packaged. To make the command-line executable, run
+
+    ```chmod a+x paup4a166_osx```
+
+### Inferring the Maximum Parsimony tree using PAUP###
+1. Run the script named Nexus_gen.py to generate the input file of PAUP.
+
+    ```python Nexus.py $infile $nexus_file.nex```
+
+    $infile could be the output of HMMcopy, Ginkgo, or CopyNumber
+
+    $nexus_file.nex is the output of Nexus.py which will be given as input to PAUP
+
+2. Open PAUP (in the following case, the binary version is that of Macintosh OS X)
+
+    ```./paup4a166_osx```
+
+3. In the shell, type 
+
+    ```Execute $nexus_file.nex```
+
+    $outfile is the path to the output of Nexus.py in the last section. The output of this step including the information of the tree will be saved in a file named logfile.log
+
+4. Parse the output of PAUP (logfile.log) using the R script named process_PAUP.R
+
+    ```Rscript process_PAUP.R logfile.log $parsed```
+
+    $parsed is the otuput of this script
+### Counting the number of copy number changes (or flips) across the tree ###
+    
+Run the script named flip_counter.py to generate the histogram of the flip-counts across the tree
+
+    ```python flip_counter.py $parsed $hist_name```
+
+    $hist_name is the name of the histogram plot 
