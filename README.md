@@ -23,6 +23,8 @@ Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickola
     * [Generating violin plots](#violin_plots)
     * [Generating plots on the whole genome with read count and absolute copy number from ground truth or a method](#read_count_copy_number)
     * [Generating the plot including both Lorenz curve and the corresponding Beta distribution](#lorenz_beta)
+    * [Generating venn diagram](#venn_diagram)
+- [Using PAUP to generate a maximum parsimony tree and count flips](#PAUP)
 
 # <a name="usage_of_single_cell_simulator"></a>Usage of Single Cell Simulator.
 ## <a name="software_requirements"></a>Software Requirements ##
@@ -470,10 +472,9 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     $pdf_output is the output pdf file.
 
-## <a name="venn_diagram"></a>Generating the Venn diagram ##
+## <a name="venn_diagram"></a>Generating venn diagram ##
 1. Generate the sets of breakpoints from the three tools.
-    ```python Venn_data.py $thr $hmmcopy_result $ginkgo_result $copynumber_result > $output.txt
-    ```
+    ```python Venn_data.py $thr $hmmcopy_result $ginkgo_result $copynumber_result > $output.txt```
 
     $thr is the threshold which determines whether two breakpoints from two tools are the same or not. We have used $thr=400000 in our analysis in the paper. 
 
@@ -486,14 +487,12 @@ The outputs of this step are the sorted bam (duplication removal step was also p
     $output.txt is the input file for the next step.
 
 2. Plot the Venn diagram in Python.
-    ```python Venn_diagram_plot.py $output.txt $fig_name
-    ```
+    ```python Venn_diagram_plot.py $output.txt $fig_name```
 
     $fig_name is the name of the output figure.
 
-## <a name="flip_count"></a>Flip-count Analysis ##
-
-### Installing and running PAUP. ###
+# <a name="PAUP"></a>Using PAUP to generate a maximum parsimony tree and count flips **
+## Installing and running PAUP. ##
 
 1. Download PAUP from http://phylosolutions.com/paup-test/. In the website, under Command-line binaries, you can find the command-line versions of PAUP according to your OS. In case you need the GUI version of PAUP, download the file named PAUP_dev_icc.zip.
 
@@ -501,7 +500,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     ```chmod a+x paup4a166_osx```
 
-### Inferring the Maximum Parsimony tree using PAUP###
+## Inferring the Maximum Parsimony tree using PAUP##
 1. Run the script named Nexus_gen.py to generate the input file of PAUP.
 
     ```python Nexus.py $infile $nexus_file.nex```
@@ -525,7 +524,8 @@ The outputs of this step are the sorted bam (duplication removal step was also p
     ```Rscript process_PAUP.R logfile.log $parsed```
 
     $parsed is the otuput of this script
-### Counting the number of copy number changes (or flips) across the tree ###
+
+## Counting the number of copy number changes (or flips) across the tree ##
     
 Run the script named flip_counter.py to generate the histogram of the flip-counts across the tree
 
