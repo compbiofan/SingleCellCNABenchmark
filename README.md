@@ -24,7 +24,7 @@ Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickola
     * [Generating plots on the whole genome with read count and absolute copy number from ground truth or a method](#read_count_copy_number)
     * [Generating the plot including both Lorenz curve and the corresponding Beta distribution](#lorenz_beta)
     * [Generating venn diagram](#venn_diagram)
-- [Using PAUP to generate a maximum parsimony tree and count flips](#PAUP)
+- [Using PAUP to generate a maximum parsimony tree and count flips.](#PAUP)
 
 # <a name="usage_of_single_cell_simulator"></a>Usage of Single Cell Simulator.
 ## <a name="software_requirements"></a>Software Requirements ##
@@ -501,7 +501,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     ```chmod a+x paup4a166_osx```
 
-## Inferring the Maximum Parsimony tree using PAUP##
+## Inferring the Maximum Parsimony tree using PAUP ##
 
 1. Run the script named Nexus_gen.py to generate the input file of PAUP.
 
