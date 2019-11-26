@@ -491,7 +491,8 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     $fig_name is the name of the output figure.
 
-# <a name="PAUP"></a>Using PAUP to generate a maximum parsimony tree and count flips **
+# <a name="PAUP"></a>Using PAUP to generate a maximum parsimony tree and count flips #
+
 ## Installing and running PAUP. ##
 
 1. Download PAUP from http://phylosolutions.com/paup-test/. In the website, under Command-line binaries, you can find the command-line versions of PAUP according to your OS. In case you need the GUI version of PAUP, download the file named PAUP_dev_icc.zip.
@@ -501,6 +502,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
     ```chmod a+x paup4a166_osx```
 
 ## Inferring the Maximum Parsimony tree using PAUP##
+
 1. Run the script named Nexus_gen.py to generate the input file of PAUP.
 
     ```python Nexus.py $infile $nexus_file.nex```
