@@ -474,6 +474,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
 ## <a name="venn_diagram"></a>Generating venn diagram ##
 1. Generate the sets of breakpoints from the three tools.
+
     ```python scripts_plots/venn/Venn_data.py $thr $hmmcopy_result $ginkgo_result $copynumber_result > $output.txt```
 
     $thr is the threshold which determines whether two breakpoints from two tools are the same or not. We have used $thr=400000 in our analysis in the paper. 
@@ -530,8 +531,8 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
 ## Counting the number of copy number changes (or flips) across the tree ##
     
-Run the script named flip_counter.py to generate the histogram of the flip-counts across the tree
+    Run the script named flip_counter.py to generate the histogram of the flip-counts across the tree
 
     ```python flip_counter.py $parsed $hist_name```
 
-    $hist_name is the name of the histogram plot 
+    $hist_name is the name of the histogram plot.
