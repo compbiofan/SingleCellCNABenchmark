@@ -474,7 +474,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
 ## <a name="venn_diagram"></a>Generating venn diagram ##
 1. Generate the sets of breakpoints from the three tools.
-    ```python Venn_data.py $thr $hmmcopy_result $ginkgo_result $copynumber_result > $output.txt```
+    ```python scripts_plots/venn/Venn_data.py $thr $hmmcopy_result $ginkgo_result $copynumber_result > $output.txt```
 
     $thr is the threshold which determines whether two breakpoints from two tools are the same or not. We have used $thr=400000 in our analysis in the paper. 
 
@@ -488,7 +488,7 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
 2. Plot the Venn diagram in Python.
 
-    ```python Venn_diagram_plot.py $output.txt $fig_name```
+    ```python scripts_plots/venn/Venn_diagram_plot.py $output.txt $fig_name```
 
     $fig_name is the name of the output figure.
 
@@ -522,11 +522,11 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     $outfile is the path to the output of Nexus.py in the last section. The output of this step including the information of the tree will be saved in a file named logfile.log
 
-4. Parse the output of PAUP (logfile.log) using the R script named process_PAUP.R
+4. Parse the output of PAUP (logfile.log).
 
-    ```Rscript process_PAUP.R logfile.log $parsed```
+    ```perl PAUP/process_PAUP.pl logfile.log $parsed```
 
-    $parsed is the otuput of this script
+    $parsed is the output of this script.
 
 ## Counting the number of copy number changes (or flips) across the tree ##
     
