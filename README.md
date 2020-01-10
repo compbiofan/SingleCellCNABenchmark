@@ -338,6 +338,14 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     This step generates gt.forCopyNumber.csv as the ground truth to be compared to CopyNumber's results.
 
+3. If you want to generate segcopy formatted ground truth file for comparison, use the following command. 
+
+    ```python bin_groundtruth.py -a segcopy_f -b gt.all.csv --leafonly(optional) > gt.all.segcopyformatted```
+
+    segcopy_f is a file you generated from Ginkgo (see Ginkgo under commands to run HMMcopy, Ginkgo and CopyNumber (#commands_3methods) for details. gt.all.csv is the file you generated in step #1 in this section. If you want to include all ancestral nodes along with the leaves, do not put the option --leafonly in the command line. Otherwise use --leafonly in your command. 
+
+    The format of the output is "chr, start, end, leaf#1, leaf#2, ...". From the fourth column (1-based), the entries are integer copy numbers. 
+
 # <a name="plots"></a>Generating plots (violin plots, plots with Lorenz and Beta distribution, ROCs, venn diagram and flip count histograms). #
 
 ## <a name="violin_plots"></a>Generating violin plots ##
