@@ -59,9 +59,7 @@ with open("leaves.txt", "r") as l_in:
             j = 0
             for l in f_in:
                 values = l.strip().split()
-                if values[0] == "CHR":
-                    f_out.write(l)
-                else:
+                if values[0] != "CHR":
                     chr_ = values[0]
                     start_ = values[1]
                     end_ = values[2]
