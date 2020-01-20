@@ -19,6 +19,7 @@ Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickola
     * [Reference](#reference)
     * [Mapping the reads to the reference](#mapping)
     * [Making ground truth from the simulator for comparison](#ground_truth)
+    * [Generating a newick formatted tree from .npy file in simulation](#newick)
 - [Generating plots (violin plots, plots with Lorenz and Beta distribution, ROCs, venn diagram and flip count histograms).](#plots)
     * [Generating violin plots](#violin_plots)
     * [Generating plots on the whole genome with read count and absolute copy number from ground truth or a method](#read_count_copy_number)
@@ -345,6 +346,12 @@ The outputs of this step are the sorted bam (duplication removal step was also p
     segcopy_f is a file you generated from Ginkgo (see Ginkgo under commands to run HMMcopy, Ginkgo and CopyNumber (#commands_3methods) for details. gt.all.csv is the file you generated in step #1 in this section. If you want to include all ancestral nodes along with the leaves, do not put the option --leafonly in the command line. Otherwise use --leafonly in your command. 
 
     The format of the output is "chr, start, end, leaf#1, leaf#2, ...". From the fourth column (1-based), the entries are integer copy numbers. 
+
+## <a name="newick"></a>Generate a newick-formatted tree from .npy file in simulation. ##
+
+    The simulator automatically stores the tree structure in from_first_step.tree.npy. To generate the newick string of the tree, use the following command.
+
+    ```python gen_newick.py from_first_step.tree.npy > newicktree.txt```
 
 # <a name="plots"></a>Generating plots (violin plots, plots with Lorenz and Beta distribution, ROCs, venn diagram and flip count histograms). #
 
