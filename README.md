@@ -281,6 +281,8 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
     If using default gamma, which is 40, run
 
     ```Rscript $this_dir/CopyNumber.R $dir/copynumber.input.csv $output_f```
+
+### Run AneuFinder. ###
     
 # <a name="misc"></a>Miscellaneous. #
 ## <a name="reference_file"></a>Referece file ##
@@ -400,6 +402,20 @@ The outputs of this step are the sorted bam (duplication removal step was also p
         ```for i in `seq 1 $n`; do mkdir $dir/CopyNumber/p$i; done```
 
         In each $dir/CopyNumber/p$i folder, put the corresponding CopyNumber output file.  
+
+    * Prepare AneuFinder files.
+
+        In a folder $dir/AneuFinder,
+
+        ```for i in `seq 1 $n`; do mkdir $dir/AneuFinder/p$i; done```
+
+        In each $dir/Ginkgo/p[1-$n] folder, put the corresponding binsize_2e+05_stepsize_2e+05_CNV.bed file from AneuFinder's output (which can be found in $output_folder/BROWSERFILES/method-edivisive/ in .gz format).
+
+        Convert the bed file and separate the results for each cell.
+
+        ```for i in `seq 1 $n`; do python scripts_plots/general_scripts/convertAneuFinder2bed_pop.py $dir/AneuFinder/p$i/binsize_2e+05_stepsize_2e+05_CNV.bed leaf; done```
+
+        $n has the same meaning as described in HMMcopy's section.
 
     * Prepare ground truth file.
 
