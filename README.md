@@ -294,7 +294,7 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
         if (!requireNamespace("BiocManager", quietly = TRUE))
         install.packages("BiocManager")
 
-        BiocManager::install("AneuFinder")```
+        BiocManager::install("AneuFinder")
         BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
         ```
 
