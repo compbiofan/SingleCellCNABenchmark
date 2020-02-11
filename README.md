@@ -500,14 +500,14 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
     The following is a few lines to show the format of actual or inferred ploidy file. 
 
-    ```
-    leaf11   1.56
-    leaf14   1.65
-    ```
+        ```
+        leaf11   1.56
+        leaf14   1.65
+        ```
 
     These files can be obtained by running scripts in 
 
-    ```python utilities/calc_ploidy_[gt.py|segcopy.py|hmmcopy.sh]```
+        ```python utilities/calc_ploidy_[gt.py|segcopy.py|hmmcopy.sh]```
 
 2. Plot the scatterplot and histograms. 
 
