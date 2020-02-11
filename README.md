@@ -490,21 +490,18 @@ The outputs of this step are the sorted bam (duplication removal step was also p
 
 1. Prepare a meta file, in which each line represents a ploidy, and there are three columns. The first column is the file name (with the path) of the ground truth ploidy file, the second the file name (with the path) of the inferred ploidy file, and the third a color denoting this ploidy. The aforementioned two files should have the same format. Both will have two columns, the first the cell name, the second the ploidy corresponding to the cell. The number of rows is the number of cells in the study. The two files should have the same set of cells. The following is an example of the meta file.
 
-    ```$path/gt_ploidy_p1.csv $path/ginkgo_ploidy_p1.csv    purple``` 
-
-    ```$path/gt_ploidy_p2.csv $path/ginkgo_ploidy_p2.csv    green``` 
-
-    ```$path/gt_ploidy_p3.csv $path/ginkgo_ploidy_p3.csv    orange``` 
-
-    ```$path/gt_ploidy_p4.csv $path/ginkgo_ploidy_p4.csv    red``` 
-
-    ```$path/gt_ploidy_p5.csv $path/ginkgo_ploidy_p5.csv    dodgerblue``` 
+    ```$path/gt_ploidy_p1.csv $path/ginkgo_ploidy_p1.csv    purple 
+    $path/gt_ploidy_p2.csv $path/ginkgo_ploidy_p2.csv    green 
+    $path/gt_ploidy_p3.csv $path/ginkgo_ploidy_p3.csv    orange 
+    $path/gt_ploidy_p4.csv $path/ginkgo_ploidy_p4.csv    red 
+    $path/gt_ploidy_p5.csv $path/ginkgo_ploidy_p5.csv    dodgerblue
+    ``` 
 
 The following is a few lines to show the format of actual or inferred ploidy file. 
 
-    ```leaf11   1.56```
-
-    ```leaf14   1.65```
+    ```leaf11   1.56
+    leaf14   1.65
+    ```
 
 These files can be obtained by running scripts in 
 
