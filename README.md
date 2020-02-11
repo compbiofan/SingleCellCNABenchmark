@@ -290,17 +290,20 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
 
     In R, type 
 
-    ```if (!requireNamespace("BiocManager", quietly = TRUE))
+        ```
+        if (!requireNamespace("BiocManager", quietly = TRUE))
         install.packages("BiocManager")
 
         BiocManager::install("AneuFinder")```
-        BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")```
+        BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+        ```
 
 ### Running AneuFinder. ###
 
     In R, type
 
-    ```library(AneuFinder)
+        ```
+        library(AneuFinder)
 
         library(BSgenome.Hsapiens.UCSC.hg19)
 
@@ -308,7 +311,8 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
         blacklist <- system.file("extdata", "blacklist-hg19.bed.gz", package="AneuFinderData")
         datafolder<-"ploidy${ploidy}_1"
         outputfolder<-"ploidy${ploidy}_1_out"
-        Aneufinder(inputfolder = datafolder, outputfolder = outputfolder, assembly = 'hg19', numCPU = 1, binsizes = c(2e5), chromosomes = c(1:22,'X','Y'), blacklist = blacklist, correction.method = 'GC', GC.BSgenome = BSgenome.Hsapiens.UCSC.hg19, refine.breakpoints=FALSE, method = 'edivisive')```
+        Aneufinder(inputfolder = datafolder, outputfolder = outputfolder, assembly = 'hg19', numCPU = 1, binsizes = c(2e5), chromosomes = c(1:22,'X','Y'), blacklist = blacklist, correction.method = 'GC', GC.BSgenome = BSgenome.Hsapiens.UCSC.hg19, refine.breakpoints=FALSE, method = 'edivisive')
+        ```
 
     Here ${ploidy} refers to the dataset being processed. In ploidy${ploidy}_1 are the bam files of all the cells to be processed. Folder ploidy${ploidy}_1_out will contain the results from AneuFinder. In particular, the result file is in ploidy${ploidy}_1_out/BROWSERFILES/method-edivisive/binsize_2e+05_stepsize_2e+05_CNA.bed.gz. This file will be further processed in section "Generating violin plots". 
 
