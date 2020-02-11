@@ -15,6 +15,7 @@ Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickola
     * [HMMcopy](#hmmcopy)
     * [Ginkgo](#ginkgo)
     * [CopyNumber](#copynumber)
+    * [AneuFinder](#aneufinder)
 - [Miscellaneous.](#misc)
     * [Reference](#reference)
     * [Mapping the reads to the reference](#mapping)
@@ -22,6 +23,7 @@ Authors: Xian Fan (xf2@rice.edu), Mohammadamin Edrisi (edrisi@rice.edu), Nickola
     * [Generating a newick formatted tree from .npy file in simulation](#newick)
 - [Generating plots (violin plots, plots with Lorenz and Beta distribution, ROCs, venn diagram and flip count histograms).](#plots)
     * [Generating violin plots](#violin_plots)
+    * [Generating scatter plots of ploidies with histogram](#scatter_plots)
     * [Generating plots on the whole genome with read count and absolute copy number from ground truth or a method](#read_count_copy_number)
     * [Generating the plot including both Lorenz curve and the corresponding Beta distribution](#lorenz_beta)
     * [Generating venn diagram](#venn_diagram)
@@ -282,6 +284,35 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
 
     ```Rscript $this_dir/CopyNumber.R $dir/copynumber.input.csv $output_f```
 
+## <a name="aneufinder"></a>AneuFinder ##
+
+### Installing the software. ###
+
+    In R, type 
+
+    ```if (!requireNamespace("BiocManager", quietly = TRUE))
+        install.packages("BiocManager")
+
+        BiocManager::install("AneuFinder")```
+        BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")```
+
+### Running AneuFinder. ###
+
+    In R, type
+
+    ```library(AneuFinder)
+
+        library(BSgenome.Hsapiens.UCSC.hg19)
+
+        var.width.ref <- system.file("extdata", "hg19_diploid.bam.bed.gz", package="AneuFinderData")
+        blacklist <- system.file("extdata", "blacklist-hg19.bed.gz", package="AneuFinderData")
+        datafolder<-"ploidy${ploidy}_1"
+        outputfolder<-"ploidy${ploidy}_1_out"
+        Aneufinder(inputfolder = datafolder, outputfolder = outputfolder, assembly = 'hg19', numCPU = 1, binsizes = c(2e5), chromosomes = c(1:22,'X','Y'), blacklist = blacklist, correction.method = 'GC', GC.BSgenome = BSgenome.Hsapiens.UCSC.hg19, refine.breakpoints=FALSE, method = 'edivisive')```
+
+    Here ${ploidy} refers to the dataset being processed. In ploidy${ploidy}_1 are the bam files of all the cells to be processed. Folder ploidy${ploidy}_1_out will contain the results from AneuFinder. In particular, the result file is in ploidy${ploidy}_1_out/BROWSERFILES/method-edivisive/binsize_2e+05_stepsize_2e+05_CNA.bed.gz. This file will be further processed in section "Generating violin plots". 
+
+
 ### Run AneuFinder. ###
     
 # <a name="misc"></a>Miscellaneous. #
@@ -450,6 +481,35 @@ The outputs of this step are the sorted bam (duplication removal step was also p
         ```python fluc_quan.py fluc $rep 4```
 
         In quantitative analysis we don't evaluate CopyNumber as it does not output absolute copy number.
+
+    * To generate violin plots for AneuFinder, run
+
+        ```python scripts_plots/violin/scripts/ploidy_qua[l|n]_AneuFinder.py ploidy 1 1 5```
+
+## <a name="scatter_plots"></a>Generating scatter plots of ploidies with histogram. ##
+
+1. Prepare a meta file, in which each line represents a ploidy, and there are three columns. The first column is the file name (with the path) of the ground truth ploidy file, the second the file name (with the path) of the inferred ploidy file, and the third a color denoting this ploidy. The aforementioned two files should have the same format. Both will have two columns, the first the cell name, the second the ploidy corresponding to the cell. The number of rows is the number of cells in the study. The two files should have the same set of cells. The following is an example of the meta file.
+
+    ```$path/gt_ploidy_p1.csv $path/ginkgo_ploidy_p1.csv    purple``` 
+    ```$path/gt_ploidy_p2.csv $path/ginkgo_ploidy_p2.csv    green``` 
+    ```$path/gt_ploidy_p3.csv $path/ginkgo_ploidy_p3.csv    orange``` 
+    ```$path/gt_ploidy_p4.csv $path/ginkgo_ploidy_p4.csv    red``` 
+    ```$path/gt_ploidy_p5.csv $path/ginkgo_ploidy_p5.csv    dodgerblue``` 
+
+The following is a few lines to show the format of actual or inferred ploidy file. 
+
+    ```leaf11   1.56```
+    ```leaf14   1.65```
+
+These files can be obtained by running scripts in 
+
+    ```python utilities/calc_ploidy_[gt.py|segcopy.py|hmmcopy.sh]```
+
+2. Plot the scatterplot and histograms. 
+
+    ```python scripts_plots/ploidy_comparison/scatterplot_hmmcopy.py $meta_file $output_fig.png```
+
+    $output_fig.png is the output figure file. (a) is the summary of the five ploidies. (b)-(e) are the scatter plots for each ploidy, each having a histogram showing the percentage of each predicted ploidy value on the right. 
 
 ## <a name="read_count_copy_number"></a>Generating plots on the whole genome with read count and absolute copy number from ground truth or a method. ##
 

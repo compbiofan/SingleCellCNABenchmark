@@ -1,0 +1,1 @@
+for i in `seq 1 5`; do pushd p$i/rep_1/hmmcopy/output/strength10m_nu2p1_ep999999/; for i in `ls *.csv`; do printf "$i" >> ploidy.csv; perl -ane 'BEGIN{$p = 0; $t = 0}{@a = split(/\,/, $_); $p += $a[3] * ($a[2] - $a[1]); $t += $a[2] - $a[1]; }END{$p/=$t; print "\t" . $p . "\n"}' $i >> ploidy.csv; done; popd; done
