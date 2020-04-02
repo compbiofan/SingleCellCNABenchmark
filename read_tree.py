@@ -6,6 +6,15 @@ from gen_tree import get_cn_from_corres
 import CN
 import argparse
 import sys
+import re
+
+class mynode:
+    def __init__(self, ID, parent=None):
+        self.ID = ID
+        # ID
+        self.parent = parent
+        self.children = []
+
 
 # a new function added in Feb. 2020
 # output a matrix, in which the entry of (i, j) represents the number of events between these two profiles (here assume i and j are both leaves)
@@ -78,10 +87,110 @@ def get_leafid_array(tree):
             a.append(t.id)
     return a
 
-
-def get_summary(tree):
+def retrieve_new_CNAs(tree):
+    s = {}
+    S = {}
     for t in tree:
         ID = t.id
+        s[ID] = str(ID)
+        S[ID] = str(ID) 
+    # now count
+    for t in tree:
+        ID = t.id
+        # s contains only new CNAs to this node
+        s[ID] = {}
+        # S contains all
+        S[ID] = {}
+        summary = t.cn_summary
+        p = t.parentID        
+        for chr in summary:
+            for pos in summary[chr]:
+                chr_ = chr + 1
+                if chr_ == 23:
+                    chr_ = "X"
+                if chr_ == 24:
+                    chr_ = "Y"
+                str_ = str(chr_) + ":" + str(pos) + "_" + str(summary[chr][pos])
+                if p == -1:
+                    s[ID][str_] = 1
+                elif str_ not in S[p]:
+                    s[ID][str_] = 1
+                S[ID][str_] = 1
+    return s
+            
+# print the tree in newick format, level is to control when to stop to dig into the tree (in which case only leaves in that cluster and the head node will be printed)
+def convert2newick(Tree, str_, i):
+    # stop
+    if i >= len(Tree):
+        return str_
+    node = Tree[i]
+    parent = node.parent
+    children = node.children
+    # get rid of the node itself
+    c_arr = []
+    for c in children:
+        if c != str(i):
+            c_arr.append(c)
+    children = c_arr
+
+    if len(children) >= 1:
+        #print children
+        # prepare for where to replace
+        splitted = re.split(r'(\d+)', str_)
+        i_ = -1
+        for i_ in range(len(splitted)):
+            if str(splitted[i_]) == str(i):
+                break
+        # now make a new string to replace
+        new_substr = "(" + "," . join(children) + ")"
+        #print str(splitted[i_]) + " is to be replaced by " + new_substr
+        # concatenate
+        splitted[i_] = new_substr + splitted[i_]
+        str_ = "".join(splitted)
+        str_ = convert2newick(Tree, str_, i + 1)
+    else:
+        str_ = convert2newick(Tree, str_, i + 1)
+    return str_
+        
+        
+def print_newick(tree):
+
+    # a new tree with a simplified structure
+    Tree = []
+    
+    # step 1, read the npy file and put them in MyNode
+    for i in range(len(tree)):
+        node = tree[i]
+        parent = node.parentID
+        ID = i
+        Tree.append(mynode(ID, parent))
+        # update the children of its parent
+        Tree[parent].children.append(str(ID))
+    
+    str_ = convert2newick(Tree, "(0)", 0)
+    #print str[1:-1]
+    return str_
+
+def print_tree(tree):
+    leaf_only = True
+    dec = get_descendants(tree, leaf_only, False, "NA") 
+    s = retrieve_new_CNAs(tree)
+    children = get_children(tree)
+    for t in tree:
+        ID = t.id
+        #if ID == 0:
+        #    continue
+        #else:
+        decs = dec[ID]
+        num = len(decs)
+        print str(ID) + "\t" + ";".join(children[ID]) + "\t" + str(num) + "\t" + ";".join(s[ID].keys()) + "\t" + ";".join(decs)
+
+def get_summary(tree, select_leaf):
+    for t in tree:
+        ID = t.id
+        if select_leaf:
+            if not t.is_leaf:
+                continue
         summary = t.cn_summary
         for chr in summary:
             for pos in summary[chr]:
@@ -94,6 +203,59 @@ def get_summary(tree):
                 if chr_ == "chr24":
                     chr_ = "chrY"
                 print "\t".join([chr_, str(pos_s), str(pos_e), str(cn), str(ID)]) 
+
+def print_large_clusters(tree, leaf_only, size):
+    d = get_descendants(tree, leaf_only, True, size)
+    for i in d:
+        if len(d[i]) != 0:
+            y = [str(x) for x in d[i]]
+            print " ".join(y)
+
+# for each node in the tree, find the descendants of it
+# in a reverse order, traverse the tree. For every node, add the descendants of its daughter cells, and its daughter cells into its descendant list. 
+# if leaf_only is on, output only leaf as the descendants; 
+# if cut_by_size is on, then remove the descendants if the parent's descendants do not fall into the size range
+def get_descendants(tree, leaf_only, cut_by_size, size):
+    d = {}
+    # intiialize the dictionary
+    for t in tree[::-1]:
+        ID = t.id
+        if leaf_only:
+            if t.is_leaf:
+                d[ID] = [str(ID)]
+            else:
+                d[ID] = []
+        else:
+            d[ID] = [str(ID)]
+    # now count
+    for t in tree[::-1]:
+        ID = t.id
+        p = t.parentID
+        if p != -1:
+            for i in d[ID]:
+                d[p].append(i) 
+
+    # cut by size
+    if cut_by_size:
+        min_, max_ = size.split(",")
+        for t in tree:
+            if len(d[t.id]) < int(min_) or len(d[t.id]) > int(max_):
+                d[t.id] = []
+                
+    return d
+
+# return a dictionary with the keys the ids, the values an array of children IDs 
+def get_children(tree):
+    d = {}
+    for t in tree:
+        ID = t.id
+        d[ID] = []
+    for t in tree:
+        ID = t.id
+        p = t.parentID
+        if p != -1:
+            d[p].append(str(ID))
+    return d
 
 # in case the tree does not have the cn summary 
 def make_summary_func(tree, ref):
@@ -117,33 +279,48 @@ def make_summary_func(tree, ref):
 parser = argparse.ArgumentParser(description='Read a tree and output specific items of it. ')
 parser.add_argument('-l', '--leaf', action='store_true')  
 parser.add_argument('-s', '--summary', action='store_true')  
+parser.add_argument('-L', '--select-leaf', action='store_true')  
 parser.add_argument('-m', '--make-summary', action='store_true')
 parser.add_argument('-r', '--ref', default="")
 parser.add_argument('-f', '--file', default="") 
 parser.add_argument('-e', '--event', action='store_true')
 parser.add_argument('-d', '--pairdist', action='store_true')
+parser.add_argument('-P', '--printtree', action='store_true')
+parser.add_argument('-N', '--printnewick', action='store_true')
+parser.add_argument('-C', '--printlargecluster', action='store_true')
+parser.add_argument('-S', '--largeclustersize', default="8,10")
 
 args = parser.parse_args()
 if_leaf = args.leaf
 event_num = args.event
 pairdist = args.pairdist
 if_summary = args.summary
+select_leaf = args.select_leaf
 make_summary = args.make_summary
+printtree = args.printtree
 ref_f = args.ref
 npy_f = args.file
+printnewick = args.printnewick
+printlargecluster = args.printlargecluster
+cluster_size = args.largeclustersize
 
 # main starts here
 if npy_f == "": 
     print("""
     Given a tree in npy format, output its leaf index or the CNV summary. 
-    Usage: python read_tree.py -l -s -f -e -d [tree.npy]
+    esage: python read_tree.py -l -s -e -d -f [tree.npy]
         -l  (--leaf)    Print leaf index, one per line. (default: off)
         -s  (--summary) Print CNV summary, one per line (chr, start, end, CN). (default: off)
+        -L  (--selectleaf)  select to print leaf, in conjunction with if_summary. (default: off)
         -m  (--make-summary)    When the tree does not have CNV summary info but the correspondence, make it and print the CNV info, like -s. Need the -r info to retrieve the info back. (default: off)
         -r  (--ref)     Reference file in .fa. Necessary only when -m is turned on. 
         -f  (--file)    The npy file storing the tree. (mandatory)
         -e  (--event)   Get the number of events (col 2) for each node (col 1) and indicate whether it is a leaf node or not (col 3). 
         -d  (--pairdist)    Get the pairwise distance between all leaf cells. Output the matrix to the stdout. (default: off) 
+        -P  (--printtree)   Print the tree with each line representing a new CNA, with the columns node, the new CNA to this node and its descendants including itself.
+        -N  (--printnewick) Print the newick formatted tree.
+        -C  (--printlargecluster)   Print large clusters.
+        -S  (--largeclustersize)   Size range separated by comma.
         """)
     sys.exit(0)
 
@@ -153,7 +330,7 @@ if if_leaf:
     get_leaf(tree)
 
 if if_summary:
-    get_summary(tree) 
+    get_summary(tree, select_leaf) 
 
 if make_summary:
     make_summary_func(tree, ref_f)
@@ -164,3 +341,11 @@ if event_num:
 if pairdist:
     get_pairwise_diff_matrix(tree)
     
+if printtree:
+    print_tree(tree)
+
+if printnewick:
+    print print_newick(tree)
+
+if printlargecluster:
+    print_large_clusters(tree, True, cluster_size)
