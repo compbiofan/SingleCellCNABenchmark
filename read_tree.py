@@ -1,5 +1,6 @@
 #!/usr/bin/python$
 import numpy
+import copy
 from gen_tree import gen_tree 
 from Gen_Ref_Fa import getlen_ref
 from gen_tree import get_cn_from_corres
@@ -117,6 +118,107 @@ def retrieve_new_CNAs(tree):
                     s[ID][str_] = 1
                 S[ID][str_] = 1
     return s
+
+# given a segcopy file with all nodes, a tree with the parent-children relationship, output the new CNAs of a child compared to the parent, including internal nodes
+def retrieve_new_overlappingCNAs(segcopy_f, Tree):
+    f = open(segcopy_f, "r")
+    line = f.readline().rstrip("\n")
+    names = []
+    # from leaf id to the column index
+    names_h = {}
+    # h is from the position to the leaf index (0-based) to CN
+    h = {}
+    first = True
+    while(line != ""):
+        array = re.split(r'\s+', line)
+        if first:
+            names = array[3:]
+            for i in range(len(names)):
+                if names[i] == "":
+                    break
+                names_h[int(names[i][4:])] = i
+            first = False
+        else:
+            cnas = array[3:]
+            loc = str(array[0]) + ":" + str(array[1]) + "-" + str(array[2])
+            h[loc] = {}
+            #locs.append(loc)
+            for i in range(len(cnas)):
+                if cnas[i] == "":
+                    break
+                h[loc][i] = int(cnas[i])
+        line = f.readline().rstrip("\n")
+    f.close()
+    # now retrieve the new CNAs comparing child's with parent's CNA profile
+    # new_cna_h is from the leaf id to chromosome to positions to CNA (+: increase, -: decrease) with the absolute copy number change
+    new_cna_h = {}
+    for i in range(len(Tree)):
+        p = Tree[i].parentID
+        new_cna_h = {}
+        i_col_id = names_h[i]
+        if p == -1:
+            for k in h.keys():
+                chr, pos = re.split(r':', k)
+                s, e = re.split(r'-', pos)
+                s = int(s)
+                if chr not in new_cna_h.keys():
+                    new_cna_h[chr] = {}
+                if h[k][i_col_id] != 2:
+                    new_cna_h[chr][s] = e + ";" + str(h[k][i_col_id] - 2)
+        else:
+            p_col_id = names_h[p]
+            for k in h.keys():
+                diff = h[k][i_col_id] - h[k][p_col_id] 
+                if diff != 0:
+                    chr, pos = re.split(r':', k)
+                    s, e = re.split(r'-', pos)
+                    s = int(s)
+                    if chr not in new_cna_h.keys():
+                        new_cna_h[chr] = {}
+                    new_cna_h[chr][s] = e + ";" + str(diff)
+        combined = combine_cnas(new_cna_h)
+        for l in combined:
+            a = copy.deepcopy(l)
+            a.append(str(i))
+            a.append(str(p))
+            print "\t".join(a)
+
+# connect the CNA bins together, return an array with chr, start, end
+def combine_cnas(h):
+    h_ret = []
+    for chr in h.keys():
+        start = "NA"
+        end = "NA"
+        prev_e = "NA"
+        prev_cn = "NA"
+        interval = 0
+        for ss in sorted(h[chr].keys()):
+            s = str(ss)
+            e, cn = re.split(r';', h[chr][ss])
+            if start == "NA":
+                start = s
+                end = e
+                prev_e = e
+                prev_cn = cn
+                interval = 0
+            elif int(s) == int(prev_e) + 1 and prev_cn == cn:
+                interval += 1
+                end = e
+                prev_e = e
+            else:
+                # temporarily not look at the actual cn 
+                if interval > 1:
+                    h_ret.append([chr, start, end, prev_cn])
+                start = s
+                end = e
+                prev_e = e
+                prev_cn = cn
+                interval = 0
+
+        if interval > 1:
+            h_ret.append([chr, start, end, cn])
+    return h_ret
+    
             
 # print the tree in newick format, level is to control when to stop to dig into the tree (in which case only leaves in that cluster and the head node will be printed)
 def convert2newick(Tree, str_, i):
@@ -289,6 +391,8 @@ parser.add_argument('-P', '--printtree', action='store_true')
 parser.add_argument('-N', '--printnewick', action='store_true')
 parser.add_argument('-C', '--printlargecluster', action='store_true')
 parser.add_argument('-S', '--largeclustersize', default="8,10")
+parser.add_argument('-O', '--retrieveoverlapping', action='store_true')
+parser.add_argument('-F', '--segcopyf', default="NA")
 
 args = parser.parse_args()
 if_leaf = args.leaf
@@ -303,6 +407,8 @@ npy_f = args.file
 printnewick = args.printnewick
 printlargecluster = args.printlargecluster
 cluster_size = args.largeclustersize
+retrieveoverlapping = args.retrieveoverlapping
+segcopy_f = args.segcopyf
 
 # main starts here
 if npy_f == "": 
@@ -321,6 +427,8 @@ if npy_f == "":
         -N  (--printnewick) Print the newick formatted tree.
         -C  (--printlargecluster)   Print large clusters.
         -S  (--largeclustersize)   Size range separated by comma.
+        -O  (--retrieveoverlapping) Retrieve new overlapping CNAs for each cell (including internal nodes). 
+        -F  (--segcopyf)    Segcopy file for retrieving new overlapping CNA. 
         """)
     sys.exit(0)
 
@@ -349,3 +457,6 @@ if printnewick:
 
 if printlargecluster:
     print_large_clusters(tree, True, cluster_size)
+
+if retrieveoverlapping:
+    retrieve_new_overlappingCNAs(segcopy_f, tree)
