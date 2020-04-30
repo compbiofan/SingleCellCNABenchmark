@@ -313,6 +313,17 @@ def print_large_clusters(tree, leaf_only, size):
             y = [str(x) for x in d[i]]
             print " ".join(y)
 
+def retrieve_new_CNAs(tree):
+    for i in range(len(tree)):
+        t = tree[i]
+        tCNs = t.true_CNs
+        for tCN in tCNs: 
+            for k in tCN.keys():
+                chr, interval = k.split(":")
+                s, e = interval.split(".")
+                print "\t".join([chr, s, e, str(tCN[k]), str(i), str(t.parentID)]) 
+    return
+        
 # for each node in the tree, find the descendants of it
 # in a reverse order, traverse the tree. For every node, add the descendants of its daughter cells, and its daughter cells into its descendant list. 
 # if leaf_only is on, output only leaf as the descendants; 
@@ -393,6 +404,7 @@ parser.add_argument('-C', '--printlargecluster', action='store_true')
 parser.add_argument('-S', '--largeclustersize', default="8,10")
 parser.add_argument('-O', '--retrieveoverlapping', action='store_true')
 parser.add_argument('-F', '--segcopyf', default="NA")
+parser.add_argument('-o', '--retrievealloverlaps', action='store_true')
 
 args = parser.parse_args()
 if_leaf = args.leaf
@@ -409,12 +421,13 @@ printlargecluster = args.printlargecluster
 cluster_size = args.largeclustersize
 retrieveoverlapping = args.retrieveoverlapping
 segcopy_f = args.segcopyf
+retrievealloverlaps = args.retrievealloverlaps
 
 # main starts here
 if npy_f == "": 
     print("""
     Given a tree in npy format, output its leaf index or the CNV summary. 
-    esage: python read_tree.py -l -s -e -d -f [tree.npy]
+    esage: python read_tree.py -l -s -e -d -o -f [tree.npy]
         -l  (--leaf)    Print leaf index, one per line. (default: off)
         -s  (--summary) Print CNV summary, one per line (chr, start, end, CN). (default: off)
         -L  (--selectleaf)  select to print leaf, in conjunction with if_summary. (default: off)
@@ -429,6 +442,7 @@ if npy_f == "":
         -S  (--largeclustersize)   Size range separated by comma.
         -O  (--retrieveoverlapping) Retrieve new overlapping CNAs for each cell (including internal nodes). 
         -F  (--segcopyf)    Segcopy file for retrieving new overlapping CNA. 
+        -o  (--retrievealloverlaps)  Retrieve new overlapping CNAs, even for those occurring on the same edge from true_CNs in the tree. Output the new CNAs for each node compared with its parent node. 
         """)
     sys.exit(0)
 
@@ -460,3 +474,6 @@ if printlargecluster:
 
 if retrieveoverlapping:
     retrieve_new_overlappingCNAs(segcopy_f, tree)
+
+if retrievealloverlaps:
+    retrieve_new_CNAs(tree)
