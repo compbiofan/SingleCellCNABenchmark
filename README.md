@@ -224,7 +224,11 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
 
 1. Download command line version of Ginkgo from https://github.com/robertaboukhalil/ginkgo. Install according to the instruction. 
 
-2. To tune alpha, which controls the significance level to accept a change point, use our modified version of ginkgo.sh and process.R, which can be found in run_ginkgo/ folder in this repository. Put ginkgo.sh in cli/, and process.R in scripts/, respectively, in the ginkgo command line folder you downloaded. If you don't have to tune alpha, use the original ginkgo.sh and process.R, but eliminate the --alpha option.  
+2. In the directory of Ginkgo, in the folder of /genomes, make a subdirectory with name hg19. Inside /genomes/hg19 run the following command:
+
+    ```wget http://qb.cshl.edu/ginkgo/uploads/hg19.original.tar.gz -O - | tar -xz```
+
+3. To tune alpha, which controls the significance level to accept a change point, use our modified version of ginkgo.sh and process.R, which can be found in run_ginkgo/ folder in this repository. Put ginkgo.sh in cli/, and process.R in scripts/, respectively, in the ginkgo command line folder you downloaded. If you don't have to tune alpha, use the original ginkgo.sh and process.R, but eliminate the --alpha option.  
 
 ### Run Ginkgo. Inputs are bam files. Output is one big file holding all copy number changes for all cells. ###
 
