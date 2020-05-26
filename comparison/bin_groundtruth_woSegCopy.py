@@ -104,23 +104,31 @@ for line in file_b:
             bin_s = int(bin_s)
             bin_e = int(bin_e)
             if s >= bin_s  and s < bin_e:
-                if abs(s - bin_s) < abs(s - bin_e):
-                    sel_s = num
-                else:
-                    sel_s = num + 1
+                #if abs(s - bin_s) < abs(s - bin_e):
+                #    sel_s = num
+                #else:
+                #    sel_s = num + 1
+                sel_s = num
             if e >= bin_s  and e < bin_e:
-                if abs(e - bin_s) < abs(e - bin_e):
-                    sel_e = num
-                else:
-                    sel_e = num + 1
+                #if abs(e - bin_s) < abs(e - bin_e):
+                #    sel_e = num - 1
+                #else:
+                #    sel_e = num
+                sel_e = num - 1
                 for bin in range(sel_s, sel_e + 1):
                     #print chr + "," + str(bin) + "," + leaf_id
-                    if bin not in mat[chr].keys():
-                        bin -= 1
-                    mat[chr][bin]["leaf" + leaf_id] = cn
+                    #if bin not in mat[chr].keys():
+                    #    bin -= 1
+                    if bin in mat[chr].keys():
+                        mat[chr][bin]["leaf" + leaf_id] = cn
 
             num += 1
 
+        if e >= bin_e and s <= bin_e:
+            for bin in range(sel_s, num + 1):
+                if bin in mat[chr].keys():
+                    mat[chr][bin]["leaf" + leaf_id] = cn
+                    
 file_b.close()
 
 # print result
