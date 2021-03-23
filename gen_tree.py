@@ -265,25 +265,25 @@ def add_CN(chrlen, cn_num, del_rate, min_cn_size, exp_theta, amp_p, corres, CN_L
 def print_corrs(corres):
     # print out the correspondence to check its correctness
     for i in range(len(corres)):
-        print "allele: " + str(i)
+        print("allele: " + str(i))
         for j in range(len(corres[i])):
-            print "chromosome: " + str(j)
+            print("chromosome: " + str(j))
             for k in range(len(corres[i][j])):
                 corr = corres[i][j][k]
                 ref = corr.ref
                 gen = corr.gen
-                print "ref: " + str(ref)
-                print "gen: " + str(gen)
+                print("ref: " + str(ref))
+                print("gen: " + str(gen))
 
 
 def print_hash(hash_):
     for key in sorted(hash_):
-        print str(key) + " " + str(hash_[key])
+        print(str(key) + " " + str(hash_[key]))
 
 # given a hash, break all overlapping keys into non-overlapping ones and preserve the value for each segment, key is in start.end
 def break_overlap(hash_):
     #bps = sorted(hash_)
-    bps = hash_.keys()
+    bps = list(hash_.keys())
     # hash that takes in the start or end breakpoint, with the value indicating the cn and status
     ret_hash = {}
     bp_hash = {}
@@ -313,7 +313,7 @@ def break_overlap(hash_):
             if j_s >= i_s and j_e <= i_e:
                 #key = float(j)
                 key = j
-                if key in ret_hash.keys():
+                if key in list(ret_hash.keys()):
                     ret_hash[key] = ret_hash[key] + cn
                 else:
                     ret_hash[key] = cn 
@@ -336,7 +336,7 @@ def get_cn_from_corres(corres, ref_len):
                 ref_e = ref_se[1]
                 key = str(ref_s) + "." + str(ref_e)
                 #key = float(key)
-                if key in hash_.keys():
+                if key in list(hash_.keys()):
                     hash_[key]= hash_[key] + 1
                 else:
                     hash_[key] = 1
@@ -389,7 +389,7 @@ def get_cn_summary_(cn_detail):
 
         # get the copy number for each pair, this will include those that are not CN, will filtered out later on
         ret_summary_ = {}
-        pair_bps = pair_bp.keys()
+        pair_bps = list(pair_bp.keys())
         pair_bps.sort(key=natural_keys) 
         for pair in pair_bps:
             pair_s, pair_e = pair.split(".")
@@ -455,7 +455,7 @@ def get_cn_summary(corres):
 
         # summarize this chromosome
         #bps = sorted(union_hash)
-        bps = union_hash.keys()
+        bps = list(union_hash.keys())
         bps.sort(key=natural_keys)
         prev_SorE = "NA"
         prev_prev_SorE = "NA"
@@ -541,7 +541,7 @@ def get_cn_detail(hash_, ref_len_):
     prev_e = -1
     rem_s = -1
     rem_e = -1
-    keys_ = hash_.keys()
+    keys_ = list(hash_.keys())
     keys_.sort(key=natural_keys)
     #for key in sorted(hash_):
     for key in keys_:

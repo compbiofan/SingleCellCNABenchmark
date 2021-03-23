@@ -60,7 +60,8 @@ def gen_reads(dir, index, leaf_index, all_chrlen, fa_prefix, Alpha, Beta, x0, y0
                 try:
                     subprocess.check_call(args, shell=True)
                 except subprocess.CalledProcessError:
-                    error_out("Cannot work on '%s'" % args) 
+                    print(e)
+                    #error_out("Cannot work on '%s'" % args) 
 
                 # check N's
                 N_true = check_Ns(tmp_fa_file)
@@ -81,14 +82,16 @@ def gen_reads(dir, index, leaf_index, all_chrlen, fa_prefix, Alpha, Beta, x0, y0
                     print(args)
                     try:
                         subprocess.check_call(args, shell=True)
-                    except subprocess.CalledProcessError:
-                        error_out("Cannot work on '%s'" % args) 
+                    except subprocess.CalledProcessError as e:
+                        print(e)
+                        #error_out("Cannot work on '%s'" % args) 
 
                 args = "rm " + tmp_fa_file 
                 try:
                     subprocess.check_call(args, shell=True)
-                except subprocess.CalledProcessError:
-                    error_out("Cannot remove '%s'" % tmp_fa_file)
+                except subprocess.CalledProcessError as e:
+                    print(e)
+                    #error_out("Cannot remove '%s'" % tmp_fa_file)
                 #popen = subprocess.Popen(args)
                 #, stdout=subprocess.PIPE, shell=True)
                 #popen.wait()
@@ -96,14 +99,15 @@ def gen_reads(dir, index, leaf_index, all_chrlen, fa_prefix, Alpha, Beta, x0, y0
                 #output = popen.stdout.read()
                 #print output
                 #popen.terminate()
-    print "Done with node " + str(this_leaf_index) + ", will remove it. "
+    print("Done with node " + str(this_leaf_index) + ", will remove it. ")
     
     ref_files = fa_prefix + str(this_leaf_index) + "_*.fa"
     args = "rm " + ref_files 
     try:
         subprocess.check_call(args, shell=True)
     except subprocess.CalledProcessError:
-        error_out("Cannot remove '%s'" % ref_files)
+        print(e)
+        #error_out("Cannot remove '%s'" % ref_files)
 
 
 if len(sys.argv) <= 1:
@@ -281,7 +285,7 @@ if skip == 1:
     leaf_chrlen = numpy.load(leaf_chrlen_f)
     leaf_index = numpy.load(leaf_index_f)
     chr_name_array = numpy.load(chr_name_array_f)
-    tree = numpy.load(tree_f)
+    tree = numpy.load(tree_f, allow_pickle=True)
     [ref, tmp_chr_name, tmp_len_chr] = init_ref(template_ref)
     #ref = numpy.load(ref_f)
     #print(leaf_chrlen_f)

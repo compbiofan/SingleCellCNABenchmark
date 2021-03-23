@@ -115,7 +115,7 @@ def read_ref(ref):
             file.close()
             ref_a.append(ref_)
         else:
-            print file_ + " does not exist and cannot be opened."
+            print(file_ + " does not exist and cannot be opened.")
     return ref_a
    
 def write_ref(ref, chr_name, fasta):

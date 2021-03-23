@@ -157,23 +157,23 @@ def retrieve_new_overlappingCNAs(segcopy_f, Tree):
         new_cna_h = {}
         i_col_id = names_h[i]
         if p == -1:
-            for k in h.keys():
+            for k in list(h.keys()):
                 chr, pos = re.split(r':', k)
                 s, e = re.split(r'-', pos)
                 s = int(s)
-                if chr not in new_cna_h.keys():
+                if chr not in list(new_cna_h.keys()):
                     new_cna_h[chr] = {}
                 if h[k][i_col_id] != 2:
                     new_cna_h[chr][s] = e + ";" + str(h[k][i_col_id] - 2)
         else:
             p_col_id = names_h[p]
-            for k in h.keys():
+            for k in list(h.keys()):
                 diff = h[k][i_col_id] - h[k][p_col_id] 
                 if diff != 0:
                     chr, pos = re.split(r':', k)
                     s, e = re.split(r'-', pos)
                     s = int(s)
-                    if chr not in new_cna_h.keys():
+                    if chr not in list(new_cna_h.keys()):
                         new_cna_h[chr] = {}
                     new_cna_h[chr][s] = e + ";" + str(diff)
         combined = combine_cnas(new_cna_h)
@@ -186,13 +186,13 @@ def retrieve_new_overlappingCNAs(segcopy_f, Tree):
 # connect the CNA bins together, return an array with chr, start, end
 def combine_cnas(h):
     h_ret = []
-    for chr in h.keys():
+    for chr in list(h.keys()):
         start = "NA"
         end = "NA"
         prev_e = "NA"
         prev_cn = "NA"
         interval = 0
-        for ss in sorted(h[chr].keys()):
+        for ss in sorted(list(h[chr].keys())):
             s = str(ss)
             e, cn = re.split(r';', h[chr][ss])
             if start == "NA":
@@ -285,7 +285,7 @@ def print_tree(tree):
         #else:
         decs = dec[ID]
         num = len(decs)
-        print str(ID) + "\t" + ";".join(children[ID]) + "\t" + str(num) + "\t" + ";".join(s[ID].keys()) + "\t" + ";".join(decs)
+        print str(ID) + "\t" + ";".join(children[ID]) + "\t" + str(num) + "\t" + ";".join(list(s[ID].keys())) + "\t" + ";".join(decs)
 
 def get_summary(tree, select_leaf):
     for t in tree:
@@ -318,7 +318,7 @@ def retrieve_new_CNAs(tree):
         t = tree[i]
         tCNs = t.true_CNs
         for tCN in tCNs: 
-            for k in tCN.keys():
+            for k in list(tCN.keys()):
                 chr, interval = k.split(":")
                 s, e = interval.split(".")
                 print "\t".join([chr, s, e, str(tCN[k]), str(i), str(t.parentID)]) 
