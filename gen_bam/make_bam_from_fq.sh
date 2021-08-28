@@ -18,6 +18,6 @@ samtools view -q $qual -hbS ${str}.sam > ${str}.bam
 samtools sort -o ${str}.sorted.beforedup.bam ${str}.bam
 samtools rmdup ${str}.sorted.beforedup.bam ${str}.sorted.bam
 samtools index ${str}.sorted.bam
-rm ${str}.sam
-rm ${str}.bam
-rm ${str}.sorted.beforedup.bam
+#rm ${str}.sam
+#rm ${str}.bam
+#rm ${str}.sorted.beforedup.bam

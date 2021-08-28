@@ -3,10 +3,8 @@
 # add copy number, each branch has a copy number variation
 # assume the genome is diploid, and not go aneuploid
 """
-Created on Sat Mar 24 13:59:59 2018
-
-@authors: Xian Fan and Mohammad Edrisi
-Contacting email: xf2@rice.edu
+@authors: Xian Fan Mallory
+Contacting email: fan@cs.fsu.edu
 """
 # generate tree, along with copy number variation happening to the branches. write the final fasta for each leaf to a file.
 # this file is a wrapper from Beta_Splitting_Model.py as of 09052018
