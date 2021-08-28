@@ -224,6 +224,24 @@ The following lists the command to simulate the reads  (step 2 of the simulator)
 
 1. Download command line version of Ginkgo from https://github.com/robertaboukhalil/ginkgo. Install according to the instruction. 
 
+    In particular, to use our modified version of ginkgo (more details in #3), install the R packages, ctc, DNAcopy and inline by the following R command in R (we use R/4.0.0):
+
+    if (!requireNamespace("BiocManager", quietly = TRUE))
+        install.packages("BiocManager")
+
+    BiocManager::install("ctc")
+    BiocManager::install("DNAcopy")
+    install.packages("inline")
+    install.packages("gplots")
+    install.packages("scales")
+    install.packages("plyr")
+    install.packages("ggplot2")
+    install.packages("gridExtra")
+    install.packages("fastcluster")
+    install.packages("heatmap3")
+
+    In the directory of ginkgo, type "make". This will build all the executable files from the C++ files. 
+
 2. In the directory of Ginkgo, in the folder of /genomes, make a subdirectory with name hg19. Inside /genomes/hg19 run the following command:
 
     ```wget http://qb.cshl.edu/ginkgo/uploads/hg19.original.tar.gz -O - | tar -xz```
