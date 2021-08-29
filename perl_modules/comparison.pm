@@ -13,6 +13,7 @@ sub get_ginkgo_h{
     my ($chr, $s, $e, $cn);
     open fh_, "<$ginkgo" or die $!;
     while(<fh_>){
+        next if($_ =~ /^CHR/ && $_ =~ /START/);
         #next if($_ =~ /chr\,/);
         my @a = split(/\t/, $_);
         ($chr, $s, $e, $cn) = @a[0 .. 3];
@@ -101,6 +102,29 @@ sub get_hmm_h{
     }
     return $hmm_h;
 }
+
+# updated 08292021, for a list of CNs of ground truth without any 2's in the list. chr, start, end, cn, each line is a CN.
+sub get_gt_h_clean{
+    my ($gt) = @_;
+    my $gt_h;
+    my $stat;
+    open fh_, "<$gt" or die $!;
+    while(<fh_>){
+        chomp;
+        my @a = split(/\t/, $_);
+        if($a[2] > 2){
+            $stat = "r";
+        }
+        elsif($a[2] < 2){
+            $stat = "f"
+        }
+        $gt_h->{$stat}->{$a[0]}->{$a[1]} = 1;
+        $gt_h->{$stat}->{$a[0]}->{$a[2]} = 1;
+    }
+    close fh_;
+    return $gt_h;
+}
+
 
 sub get_gt_h{
     my ($gt) = @_;
@@ -213,8 +237,9 @@ sub get_cn_h{
     return $cn_h;
 }
 
+# if gt contains all bins, gt_status=long; otherwise gt_status=short
 sub get_recall_precision{
-    my ($hmm, $gt, $t, $method) = @_;
+    my ($hmm, $gt, $t, $method, $gt_status) = @_;
     my $hmm_h;
     if(defined $method && $method eq "ginkgo"){
         $hmm_h = &get_ginkgo_h($hmm);
@@ -222,7 +247,15 @@ sub get_recall_precision{
     else{
         $hmm_h = &get_hmm_h($hmm);
     }
-    my $gt_h = &get_gt_h($gt);
+    # modified the way to read gt on 08292021 for the short version available
+    my $gt_h;
+    if($gt_status eq "long"){
+        $gt_h = &get_gt_h($gt);
+    }
+    else{
+        $gt_h = &get_gt_h_clean($gt);
+    }
+        
 # compare the two
     my $gt_r_total = &count_total($gt_h, "r");
     my $gt_f_total = &count_total($gt_h, "f");
